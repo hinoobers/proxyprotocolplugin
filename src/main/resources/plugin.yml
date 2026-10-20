@@ -1,0 +1,7 @@
+name: RealIP
+version: 1.0.0
+main: dev.proxyprotocol.RealIpPlugin
+description: Trusted HAProxy PROXY v1/v2 forwarding for Bukkit servers
+author: noobtunnel
+website: https://tunnel.byenoob.com
+load: STARTUP

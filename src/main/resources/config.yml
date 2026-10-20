@@ -1,0 +1,10 @@
+# Works automatically for tunnel clients running on this machine, including
+# IPv4/IPv6 localhost and this machine's discovered LAN/interface addresses.
+# Does NOT trust other machines on the same LAN.
+trust-local-addresses: true
+# Additional trusted proxy IPs/CIDRs, for remote proxies or separate containers.
+trusted-proxies: []
+# Set trust-local-addresses to false to use ONLY this explicit list.
+header-timeout-millis: 5000
+# Bounds the full v2 header including address data and optional TLVs (107..65551).
+max-header-bytes: 4096
