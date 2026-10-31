@@ -17,6 +17,15 @@ final class ProxyHeader {
         this.source = source;
     }
 
+    static boolean hasSignaturePrefix(ByteBuf in) {
+        if (!in.isReadable()) return true;
+        byte[] signature = in.getByte(in.readerIndex()) == 'P' ? V1 : V2;
+        for (int i = 0; i < Math.min(in.readableBytes(), signature.length); i++) {
+            if (in.getByte(in.readerIndex() + i) != signature[i]) return false;
+        }
+        return true;
+    }
+
     static ProxyHeader parse(ByteBuf in, int maximum) {
         int start = in.readerIndex(), size = in.readableBytes();
         if (size == 0) return null;
