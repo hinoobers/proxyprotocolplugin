@@ -1,0 +1,46 @@
+name: Release RealIP
+
+on:
+  push:
+    tags:
+      - 'v[0-9]*'
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - name: Build and test
+        run: mvn --batch-mode --no-transfer-progress clean verify
+      - name: Prepare stable download names
+        shell: bash
+        run: |
+          set -euo pipefail
+          jars=(target/real-ip-*.jar)
+          test "${#jars[@]}" -eq 1
+          mkdir release
+          cp "${jars[0]}" release/real-ip.jar
+          cd release
+          sha256sum real-ip.jar > real-ip.jar.sha256
+      - name: Publish release with both downloads ready
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release create "$RELEASE_TAG" release/real-ip.jar release/real-ip.jar.sha256 \
+            --verify-tag --draft --title "RealIP $RELEASE_TAG" --generate-notes
+          gh release edit "$RELEASE_TAG" --draft=false --latest
